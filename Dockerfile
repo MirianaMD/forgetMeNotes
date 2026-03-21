@@ -1,16 +1,19 @@
-# Ultima versiune Node 24 + Alpine recentă (3.25+)
+# Ultima versiune LTS Node 24 generic
 FROM node:24-alpine
 
 WORKDIR /app
 
-# Copiem package.json + package-lock.json pentru a instala dependențele
+# Actualizare pachete Alpine
+RUN apk update && apk upgrade --no-cache bash git
+
+# Copiem package.json + package-lock.json
 COPY app/package*.json ./
 
 # Instalare dependențe
-RUN npm install
+RUN npm install --omit=dev
 
 # Copiem restul aplicației
-COPY app .
+COPY app . 
 
 EXPOSE 3000
 
