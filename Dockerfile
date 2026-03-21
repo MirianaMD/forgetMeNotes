@@ -1,4 +1,5 @@
-FROM node:20-alpine
+# Folosim ultima versiune stabilă Alpine pentru Node 20
+FROM node:20-alpine3.24
 
 WORKDIR /app
 
