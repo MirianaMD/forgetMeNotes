@@ -1,12 +1,14 @@
-# Folosim ultima versiune stabilă Alpine pentru Node 20
-FROM node:20-alpine3.24
+# Folosim ultima versiune LTS Node + Alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
+# Copiem package.json și package-lock.json pentru a instala dependențele
 COPY app/package*.json ./
 
 RUN npm install
 
+# Copiem restul aplicației
 COPY app .
 
 EXPOSE 3000
