@@ -1,13 +1,12 @@
-# Ultima versiune stabilă Node 24 + Alpine 3.25+
-FROM node:24-alpine3.25
+# Ultima versiune stabilă Node 24 + Alpine generic
+FROM node:24-alpine
 
-# Director de lucru
 WORKDIR /app
 
-# Actualizare Alpine și pachete de bază
-RUN apk update && apk upgrade && apk add --no-cache bash git
+# Actualizare pachete Alpine
+RUN apk update && apk upgrade --no-cache bash git
 
-# Copiem doar package.json + package-lock.json
+# Copiem package.json + package-lock.json
 COPY app/package*.json ./
 
 # Instalare dependențe
@@ -16,8 +15,6 @@ RUN npm install --omit=dev
 # Copiem restul aplicației
 COPY app . 
 
-# Expunem portul aplicației
 EXPOSE 3000
 
-# Pornim aplicația
 CMD ["node", "index.js"]
