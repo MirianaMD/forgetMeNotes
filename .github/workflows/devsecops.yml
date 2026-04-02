@@ -5,9 +5,9 @@ env:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   build:
@@ -15,21 +15,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./app
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./app
 
-    - name: Run lint (SAST)
-      run: npx eslint . || true
-      working-directory: ./app
+      - name: Run lint (SAST)
+        run: npx eslint . || true
+        working-directory: ./app
 
   dependency_scan:
     name: Scan Dependencies
@@ -37,12 +37,11 @@ jobs:
     needs: build
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Audit npm dependencies
-      run: npm audit --audit-level=moderate
-      working-directory: ./app
+      - name: Audit npm dependencies
+        run: cd ./app && npm audit --audit-level=moderate
 
   docker_build_scan:
     name: Docker Build & Scan
@@ -50,23 +49,23 @@ jobs:
     needs: build
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Build Docker image
-      run: |
-        docker build -t devsecops-notes:latest .
-    
-    - name: Scan Docker image with Trivy
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: devsecops-notes:latest
-        format: table
-        exit-code: 1
-        severity: CRITICAL
+      - name: Build Docker image
+        run: |
+          docker build -t devsecops-notes:latest .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: devsecops-notes:latest
+          format: table
+          exit-code: 1
+          severity: CRITICAL
 
   health_check:
     name: Health Check
@@ -74,19 +73,19 @@ jobs:
     needs: docker_build_scan
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Build Docker image
-      run: docker build -t devsecops-notes:latest .
+      - name: Build Docker image
+        run: docker build -t devsecops-notes:latest .
 
-    - name: Run container
-      run: |
-        docker run -d --name notes-test -p 3000:3000 devsecops-notes:latest
-        sleep 5
+      - name: Run container
+        run: |
+          docker run -d --name notes-test -p 3000:3000 devsecops-notes:latest
+          sleep 5
 
-    - name: Test /health endpoint
-      run: |
-        curl --fail http://localhost:3000/health
-    - name: Stop container
-      run: docker stop notes-test
+      - name: Test /health endpoint
+        run: |
+          curl --fail http://localhost:3000/health
+      - name: Stop container
+        run: docker stop notes-test
