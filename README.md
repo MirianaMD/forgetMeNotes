@@ -1,4 +1,4 @@
-# ForgetMeNotes 🛡️📝
+# ForgetMeNotes
 
 A simple Notes App built with Node.js and Express, containerized with Docker and secured through a DevSecOps pipeline using GitHub Actions.
 
